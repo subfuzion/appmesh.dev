@@ -4,12 +4,21 @@
   "description": "App Mesh Guide",
   "author": "Tony Pujals",
   "license": "MIT",
-  "devDependencies": {
-    "vuepress": "^0.14.8"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/subfuzion/appmesh-guide.git"
   },
+  "homepage": "https://subfuzion.github.com/appmesh-guide/",
+  "bugs": {
+    "url": "https://github.com/subfuzion/appmesh-guide/issues/"
+  },
+  "keywords": [ "documentation", "appmesh", "servicemesh" ],
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "docs:deploy": "./deploy"
+  },
+  "devDependencies": {
+    "vuepress": "^0.14.8"
   }
 }
