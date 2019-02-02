@@ -1,7 +1,7 @@
 # App Mesh Workshop
 
-This is the repo for building the App Mesh workshop. It uses
-[VuewPress] for generating the static website hosted on GitHub.
+This is the repo for building the App Mesh Guide. It uses
+[VuePress] for generating the static website hosted on GitHub.
 
 For editing and serving the workshop docs locally, ensure that
 you have [Node] (version >= 8) installed on your system.
