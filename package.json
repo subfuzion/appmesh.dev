@@ -1,0 +1,14 @@
+{
+  "name": "appmesh-guide",
+  "version": "1.0.0",
+  "description": "App Mesh Guide",
+  "author": "Tony Pujals",
+  "license": "MIT",
+  "devDependencies": {
+    "vuepress": "^0.14.8"
+  },
+  "scripts": {
+    "docs:dev": "vuepress dev docs",
+    "docs:build": "vuepress build docs"
+  }
+}
