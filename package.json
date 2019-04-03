@@ -12,13 +12,20 @@
   "bugs": {
     "url": "https://github.com/subfuzion/appmesh-guide/issues/"
   },
-  "keywords": [ "documentation", "appmesh", "servicemesh" ],
+  "keywords": [
+    "documentation",
+    "appmesh",
+    "servicemesh"
+  ],
   "scripts": {
     "docs:dev": "vuepress dev docs",
     "docs:build": "vuepress build docs",
     "docs:deploy": "./deploy"
   },
   "devDependencies": {
+    "@vuepress/plugin-active-header-links": "^1.0.0-alpha.0",
+    "@vuepress/plugin-back-to-top": "^1.0.0-alpha.0",
+    "@vuepress/plugin-medium-zoom": "^1.0.0-alpha.0",
     "vuepress": "^0.14.8"
   }
 }
