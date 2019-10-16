@@ -8,8 +8,8 @@
 module.exports = {
   title: 'Orientation to App Mesh',
   tagline: 'Improve control, monitoring, and reliability of your microservice applications on AWS',
-  url: 'https://subfuzion.github.io',
-  baseUrl: '/appmesh.dev/',
+  url: 'https://appmesh.dev',
+  baseUrl: '/',
   favicon: 'img/favicon.ico',
   organizationName: 'subfuzion',
   projectName: 'appmesh.dev',
