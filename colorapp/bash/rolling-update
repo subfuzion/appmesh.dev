@@ -1,0 +1,107 @@
+#!/usr/bin/env bash
+# vim:syn=sh:ts=4:sw=4:et:ai
+
+COLOR1="$1"
+COLOR2="$2"
+
+TEST_ITERATIONS=100
+ERROR_THRESHOLD=1
+
+error() {
+  echo "[ERROR] $1"
+  exit 1
+}
+
+check_env() {
+  [[ -z "$APP" ]] && error "missing environment variable: \$APP (should be URL for the app)"
+}
+
+check_args() {
+  [[ -z "$1" ]] && error "missing first arg: should be initial version (blue|green|red)"
+  [[ -z "$2" ]] && error "missing second arg: should be final version (blue|green|red)"
+}
+
+check_deps() {
+  [[ -z $(command -v jq) ]] && error "missing required dependency: jq"
+}
+
+clear_history() {
+  # HACK until implement redis support (assumes no more than a few gateway tasks for now)
+  for i in {0..10}; do
+    curl -s "$APP"/color/clear >/dev/null
+  done
+
+}
+test_route() {
+  errs=0
+  for ((i=0; i<${TEST_ITERATIONS}; i++)); do
+    httpcode=$(curl -so /dev/null -w "%{http_code}" $APP/color)
+    if ((httpcode >= 400)); then
+      ((++errs >= ERROR_THRESHOLD)) && return $errs
+    fi
+  done
+}
+
+update_route() {
+  local file=$1
+  local i=$2
+  local count=$3
+
+  print "deploying $file ($i of $count)..."
+  resp=$(aws appmesh update-route --cli-input-json "file://${file}")
+  (($? == 0)) || error "deploy failed: $file ($i/$count)"
+
+  test_route
+  errs=$?
+  if ((errs > 0)); then
+    print "error count ($errs) exceeds acceptable threshold ($ERROR_THRESHOLD) ... rolling back ..."
+    init
+    exit $errs
+  fi
+
+  percent=$(echo "$resp" | jq '.route.spec.httpRoute.action.weightedTargets[] | select(.virtualNode == "'"${COLOR2}"'-vn").weight')
+  print "=> deployment at [$percent%]"
+}
+
+print() {
+  echo "[INFO] $1"
+}
+
+rollout() {
+  print "starting rollout..."
+  # shellcheck disable=SC2012
+  routes=$(ls "${COLOR2}"/blue-and-"${COLOR2}"-rolling-*.json | sort)
+  # shellcheck disable=SC2086
+  count=$(echo $routes | wc -w)
+  i=1
+  for r in $routes; do
+    update_route $r $i $count
+    ((i++))
+  done
+}
+
+init() {
+  aws appmesh update-route \
+    --cli-input-json "file://${COLOR1}.json" \
+    >/dev/null
+
+  clear_history
+}
+
+info() {
+  print "APP=$APP"
+  print "TEST_ITERATIONS=$TEST_ITERATIONS"
+  print "ERROR_THRESHOLD=$ERROR_THRESHOLD"
+}
+
+main() {
+  check_deps
+  check_env
+  check_args "${COLOR1}" "${COLOR2}"
+  info
+  init
+  rollout
+  clear_history
+}
+
+main "$@"
