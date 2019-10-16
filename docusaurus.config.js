@@ -8,11 +8,11 @@
 module.exports = {
   title: 'Orientation to App Mesh',
   tagline: 'Improve control, monitoring, and reliability of your microservice applications on AWS',
-  url: 'https://your-docusaurus-test-site.com',
-  baseUrl: '/',
+  url: 'https://subfuzion.github.io',
+  baseUrl: '/appmesh.dev/',
   favicon: 'img/favicon.ico',
   organizationName: 'subfuzion',
-  projectName: 'appmesh.dev', // Usually your repo name.
+  projectName: 'appmesh.dev',
   themeConfig: {
     navbar: {
       title: 'appmesh.dev',
