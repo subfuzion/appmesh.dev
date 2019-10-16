@@ -26,7 +26,7 @@ const features = [
   },
   {
     title: <>Observability</>,
-    imageUrl: 'img/appmesh-logo.svg',
+    imageUrl: 'img/monitoring.svg',
     description: (
       <>
         Because all traffic flows through Envoy proxies, App Mesh delivers
@@ -37,10 +37,10 @@ const features = [
   },
   {
     title: <>Powered by AWS</>,
-    imageUrl: 'img/appmesh-logo.svg',
+    imageUrl: 'img/aws-logo.svg',
     description: (
       <>
-        App Mesh was built specifically by AWS to meet the scale, performance,
+        The App Mesh control plane was built specifically by AWS to meet the scale, performance,
         and simplicity expectations of its customers running their microservice
         applications on ECS, EKS, EC2, and Fargate.
       </>
@@ -65,7 +65,7 @@ function Home() {
                 'button button--outline button--secondary button--lg',
                 styles.getStarted,
               )}
-              to={withBaseUrl('docs/doc1')}>
+              to={withBaseUrl('docs/introduction')}>
               Get Started
             </Link>
           </div>

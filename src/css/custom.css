@@ -12,12 +12,56 @@
  */
 
 /* You can override the default Infima variables here. */
+/*:root {*/
+/*  --ifm-color-primary: #25c2a0;*/
+/*  --ifm-color-primary-dark: rgb(33, 175, 144);*/
+/*  --ifm-color-primary-darker: rgb(31, 165, 136);*/
+/*  --ifm-color-primary-darkest: rgb(26, 136, 112);*/
+/*  --ifm-color-primary-light: rgb(70, 203, 174);*/
+/*  --ifm-color-primary-lighter: rgb(102, 212, 189);*/
+/*  --ifm-color-primary-lightest: rgb(146, 224, 208);*/
+/*}*/
+
+/*:root {*/
+/*  --ifm-color-primary: #764abc;*/
+/*  --ifm-color-primary-dark: rgb(106,64,173);*/
+/*  --ifm-color-primary-darker: rgb(94,57,154);*/
+/*  --ifm-color-primary-darkest: rgb(83,50,135);*/
+/*  --ifm-color-primary-light: rgb(132,93,195);*/
+/*  --ifm-color-primary-lighter: rgb(146,111,202);*/
+/*  --ifm-color-primary-lightest: rgb(160,130,209);*/
+/*}*/
+
 :root {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: rgb(33, 175, 144);
-  --ifm-color-primary-darker: rgb(31, 165, 136);
-  --ifm-color-primary-darkest: rgb(26, 136, 112);
-  --ifm-color-primary-light: rgb(70, 203, 174);
-  --ifm-color-primary-lighter: rgb(102, 212, 189);
-  --ifm-color-primary-lightest: rgb(146, 224, 208);
+  /* default */
+  /*  --ifm-color-primary: #25c2a0;*/
+  /*  --ifm-color-primary-dark: rgb(33, 175, 144);*/
+  /*  --ifm-color-primary-darker: rgb(31, 165, 136);*/
+  /*  --ifm-color-primary-darkest: rgb(26, 136, 112);*/
+  /*  --ifm-color-primary-light: rgb(70, 203, 174);*/
+  /*  --ifm-color-primary-lighter: rgb(102, 212, 189);*/
+  /*  --ifm-color-primary-lightest: rgb(146, 224, 208);*/
+
+  /* redux purple */
+    --ifm-color-primary: #764abc;
+    --ifm-color-primary-dark: rgb(106,64,173);
+    --ifm-color-primary-darker: rgb(94,57,154);
+    --ifm-color-primary-darkest: rgb(83,50,135);
+    --ifm-color-primary-light: rgb(132,93,195);
+    --ifm-color-primary-lighter: rgb(146,111,202);
+    --ifm-color-primary-lightest: rgb(160,130,209);
+
+  /* react cyan */
+  /*--ifm-color-primary: #61dafb;*/
+  /*--ifm-color-primary-dark: rgb(72,212,250);*/
+  /*--ifm-color-primary-darker: rgb(47,206,250);*/
+  /*--ifm-color-primary-darkest: rgb(22,201,249);*/
+  /*--ifm-color-primary-light: rgb(122,224,252);*/
+  /*--ifm-color-primary-lighter: rgb(147,230,252);*/
+  /*--ifm-color-primary-lightest: rgb(172,235,253);*/
 }
+
+/*.hero.hero--primary {*/
+/*  --ifm-hero-background-color: var(--ifm-color-primary-darkest);*/
+/*  background-color: #282c34;*/
+/*}*/
