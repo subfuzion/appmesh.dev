@@ -275,35 +275,6 @@ func deleteStack(client *awscloud.SimpleClient, options *awscloud.DeleteStackOpt
 	}
 }
 
-type RollingUpdateSpec struct {
-	// Increment is a value between 0-100 percent for rolling out an updated in incremental stages.
-	// A value of either 0 or 100 effectively disables a rolling update, meaning that the update
-	// is applied immediately.
-	Increment int
-
-	// Interval is the period to wait before applying the next update stage.
-	Interval time.Duration
-}
-
-// UpdateRouteCommandOptions contains settings for updating App Mesh routes.
-// NOTE: this, of course, is very specific to the Color App demo.
-type UpdateRouteCommandOptions struct {
-	// MeshName is the name of the App Mesh mesh to use.
-	MeshName string
-
-	// RouteName is the name of the App Mesh route to use.
-	RouteName string
-
-	// VirtualRouterName is the name of the App Mesh virtual router to use.
-	VirtualRouterName string
-
-	// Map of color to weight to apply to the color virtual nodes.
-	Weights map[string]int
-
-	// RollingUpdate affects the percentage and rate of incremental updates.
-	RollingUpdate *RollingUpdateSpec
-}
-
 // GetRouteCommandOptions contains settings for updating App Mesh routes.
 // NOTE: this, of course, is very specific to the Color App demo.
 type GetRouteCommandOptions struct {
@@ -315,74 +286,6 @@ type GetRouteCommandOptions struct {
 
 	// VirtualRouterName is the name of the App Mesh virtual router to use.
 	VirtualRouterName string
-}
-
-func updateRouteHandler(cmd *cobra.Command, args []string) {
-	meshName := "demo"
-	routeName := "color-route"
-	virtualRouterName := "colorteller-vr"
-	weights := map[string]int{}
-
-	blue, err := cmd.Flags().GetInt("blue")
-	if err != nil {
-		io.Fatal(1, "bad value for --blue option: %s", err)
-	}
-	weights["blue-vn"] = blue
-
-	green, err := cmd.Flags().GetInt("green")
-	if err != nil {
-		io.Fatal(1, "bad value for --green option: %s", err)
-	}
-	weights["green-vn"] = green
-
-	red, err := cmd.Flags().GetInt("red")
-	if err != nil {
-		io.Fatal(1, "bad value for --red option: %s", err)
-	}
-	weights["red-vn"] = red
-
-	rolling, err := cmd.Flags().GetInt("rolling")
-	if err != nil {
-		io.Fatal(1, "bad value for --rolling option: %s", err)
-	}
-	interval, err := cmd.Flags().GetInt("interval")
-	if err != nil {
-		io.Fatal(1, "bad value for --interval option: %s", err)
-	}
-
-	updateRoute(newClient(cmd), &UpdateRouteCommandOptions{
-		MeshName:          meshName,
-		RouteName:         routeName,
-		VirtualRouterName: virtualRouterName,
-		Weights:           weights,
-		RollingUpdate: &RollingUpdateSpec{
-			Increment: rolling,
-			Interval:  time.Duration(interval) * time.Second,
-		},
-	})
-}
-
-func updateRoute(client *awscloud.SimpleClient, options *UpdateRouteCommandOptions) {
-	routeSpec := BuildRouteSpec(options)
-
-	input := &appmesh.UpdateRouteInput{
-		ClientToken:       nil,
-		MeshName:          aws.String(options.MeshName),
-		RouteName:         aws.String(options.RouteName),
-		Spec:              routeSpec,
-		VirtualRouterName: aws.String(options.VirtualRouterName),
-	}
-
-	io.Step("Updating route...")
-
-	resp, err := client.UpdateRoute(input)
-	if err != nil {
-		io.Failed("Unable to update route: %s", err)
-		os.Exit(1)
-	}
-	io.Success("Updated route: %s\n%s",
-		options.RouteName,
-		formatUpdateRouteResponse(resp))
 }
 
 func getRouteHandler(cmd *cobra.Command, args []string) {
@@ -422,6 +325,11 @@ func BuildRouteSpec(options *UpdateRouteCommandOptions) *appmesh.RouteSpec {
 	weightedTargets := []appmesh.WeightedTarget{}
 	for node, weight := range options.Weights {
 		if weight > 0 {
+			// hack
+			if weight > 100 {
+				//io.Fatal(1, "weight: %d", weight)
+				weight = 100
+			}
 			weightedTargets = append(weightedTargets, appmesh.WeightedTarget{
 				VirtualNode: aws.String(node),
 				Weight:      aws.Int64(int64(weight)),
@@ -446,6 +354,10 @@ func BuildRouteSpec(options *UpdateRouteCommandOptions) *appmesh.RouteSpec {
 }
 
 func formatUpdateRouteResponse(resp *appmesh.UpdateRouteResponse) string {
+	if resp == nil {
+		return ""
+	}
+
 	sb := &strings.Builder{}
 	t := tmpl.Parse("update_route_response.tmpl")
 	t.Execute(sb, resp.Route)
@@ -509,4 +421,262 @@ func httpGet(url string) string {
 	}
 
 	return strings.TrimSpace(string(body))
+}
+
+type RollingUpdateSpec struct {
+	// Increment is a value between 0-100 percent for rolling out an updated in incremental stages.
+	// A value of either 0 or 100 effectively disables a rolling update, meaning that the update
+	// is applied immediately.
+	Increment int
+
+	// Interval is the period to wait before applying the next update stage.
+	Interval time.Duration
+}
+
+// UpdateRouteCommandOptions contains settings for updating App Mesh routes.
+// NOTE: this, of course, is very specific to the Color App demo.
+type UpdateRouteCommandOptions struct {
+	// MeshName is the name of the App Mesh mesh to use.
+	MeshName string
+
+	// RouteName is the name of the App Mesh route to use.
+	RouteName string
+
+	// VirtualRouterName is the name of the App Mesh virtual router to use.
+	VirtualRouterName string
+
+	// Map of color to weight to apply to the color virtual nodes.
+	Weights map[string]int
+
+	// RollingUpdate affects the percentage and rate of incremental updates.
+	RollingUpdate *RollingUpdateSpec
+}
+
+func updateRouteHandler(cmd *cobra.Command, args []string) {
+	meshName := "demo"
+	routeName := "color-route"
+	virtualRouterName := "colorteller-vr"
+	weights := map[string]int{}
+
+	blue, err := cmd.Flags().GetInt("blue")
+	if err != nil {
+		io.Fatal(1, "bad value for --blue option: %s", err)
+	}
+	weights["blue-vn"] = blue
+
+	green, err := cmd.Flags().GetInt("green")
+	if err != nil {
+		io.Fatal(1, "bad value for --green option: %s", err)
+	}
+	weights["green-vn"] = green
+
+	red, err := cmd.Flags().GetInt("red")
+	if err != nil {
+		io.Fatal(1, "bad value for --red option: %s", err)
+	}
+	weights["red-vn"] = red
+
+	rolling, err := cmd.Flags().GetInt("rolling")
+	if err != nil {
+		io.Fatal(1, "bad value for --rolling option: %s", err)
+	}
+	interval, err := cmd.Flags().GetInt("interval")
+	if err != nil {
+		io.Fatal(1, "bad value for --interval option: %s", err)
+	}
+
+	options := &UpdateRouteCommandOptions{
+		MeshName:          meshName,
+		RouteName:         routeName,
+		VirtualRouterName: virtualRouterName,
+		Weights:           weights,
+		RollingUpdate: &RollingUpdateSpec{
+			Increment: rolling,
+			Interval:  time.Duration(interval) * time.Second,
+		},
+	}
+
+	// if the options specify a rolling update, then (at least for now) enforce constraints
+	if isRollingUpdate(options) {
+		// must be two and only two weights set
+		// one target weight must be -1
+		// the other must be non-zero and will be coerced to 100%
+		zeroCounter := 0
+		negCounter := 0
+		for _, v := range weights {
+			switch v {
+			case -1:
+				negCounter++
+			case 0:
+				zeroCounter++
+			}
+		}
+		if zeroCounter != 1 {
+			io.Fatal(1, "one (and only one) of two target weights must be set to a value of -1")
+		}
+		if negCounter != 1 {
+			io.Fatal(1, "one (and only one) of two target weights must have a value > 0")
+		}
+	}
+
+	updateRoute(newClient(cmd), options)
+}
+
+func isRollingUpdate(options *UpdateRouteCommandOptions) bool {
+	increment := options.RollingUpdate.Increment
+	interval := options.RollingUpdate.Interval
+	return increment > 0 && increment < 100 && interval > 0
+}
+
+func updateRoute(client *awscloud.SimpleClient, options *UpdateRouteCommandOptions) {
+	routeSpec := BuildRouteSpec(options)
+
+	input := &appmesh.UpdateRouteInput{
+		ClientToken:       nil,
+		MeshName:          aws.String(options.MeshName),
+		RouteName:         aws.String(options.RouteName),
+		Spec:              routeSpec,
+		VirtualRouterName: aws.String(options.VirtualRouterName),
+	}
+
+	var resp *appmesh.UpdateRouteResponse
+	var err error
+
+	if isRollingUpdate(options) {
+		resp = rollingUpdate(client, options)
+	} else {
+		io.Step("Updating route...")
+		resp, err = client.UpdateRoute(input)
+		if err != nil {
+			io.Failed("Unable to update route: %s", err)
+			os.Exit(1)
+		}
+	}
+
+	io.Success("Updated route: %s\n%s",
+		options.RouteName,
+		formatUpdateRouteResponse(resp))
+}
+
+func rollingUpdate(client *awscloud.SimpleClient, options *UpdateRouteCommandOptions) *appmesh.UpdateRouteResponse {
+	stackName := options.MeshName
+	increment := options.RollingUpdate.Increment
+	interval := options.RollingUpdate.Interval
+
+	clearStats(client, stackName)
+
+	type target struct {
+		v1Node string
+		v1Weight int
+		v2Node string
+		v2Weight int
+	}
+
+	t := target{}
+	for k, v := range options.Weights {
+		if v < 0 {
+			t.v1Node = k
+		}
+		if v > 0 {
+			t.v2Node = k
+		}
+	}
+
+	// starting weights for the two nodes
+	t.v1Weight = 100
+	t.v2Weight = 0
+
+	io.Println("%v", t)
+	io.Println("increment: %d, interval: %d", increment, interval / time.Second)
+
+	var resp *appmesh.UpdateRouteResponse
+	var err error
+	var totalErrors int
+	totalMaxErrorsLimit := 1
+
+	test := func(count int, errLimit int, throttle time.Duration) int {
+		errs := 0
+
+		for i := 0; i < count; i++ {
+			var errs int
+
+			url := getStackOutputUrl(client, stackName)
+			ep := fmt.Sprintf("http://%s/color", url)
+			// io.Status("url: %s", ep)
+			body := httpGet(ep)
+			if body == "" {
+				// empty body happens for simulated 500 errors
+				errs++
+				//if errs >= errLimit {
+				//	return errs
+				//}
+				return 1
+			}
+			time.Sleep(throttle)
+		}
+
+		return errs
+	}
+
+	var percent int
+
+	update := func() {
+		routeSpec := BuildRouteSpec(options)
+		//fmt.Println(routeSpec.HttpRoute.Action.WeightedTargets)
+
+		input := &appmesh.UpdateRouteInput{
+			ClientToken:       nil,
+			MeshName:          aws.String(options.MeshName),
+			RouteName:         aws.String(options.RouteName),
+			Spec:              routeSpec,
+			VirtualRouterName: aws.String(options.VirtualRouterName),
+		}
+
+		io.Step("Updating route... %s => %d%%", t.v2Node, percent)
+		resp , err = client.UpdateRoute(input)
+		if err != nil {
+			io.Fatal(1, "Unable to update route: %s", err)
+			// to might want to try rolling back
+		}
+		errs := test(10, 1, time.Millisecond * 100)
+		totalErrors += errs
+		if totalErrors >= totalMaxErrorsLimit {
+			io.Failed("Rolling update failed, max error limit exceeded: %d", totalErrors)
+			io.Step("attempting rollback")
+			options.Weights[t.v1Node] = 100
+			options.Weights[t.v2Node] = 0
+			options.RollingUpdate.Increment = 0
+			updateRoute(client, options)
+			io.Status("Rollback succeeded")
+			os.Exit(0)
+		}
+	}
+
+	for percent = increment; percent <= 100; percent += increment {
+		options.Weights[t.v1Node] = t.v1Weight
+		// HACK: min, but why?
+		options.Weights[t.v2Node] = min(t.v2Weight, 100)
+		update()
+		time.Sleep(interval)
+
+		t.v1Weight -= percent
+		t.v2Weight += percent
+	}
+
+	if percent < 100 {
+		percent = 100
+		options.Weights[t.v1Node] = 0
+		options.Weights[t.v2Node] = 100
+		update()
+
+	}
+
+	return resp
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }

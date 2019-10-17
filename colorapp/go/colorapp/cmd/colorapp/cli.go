@@ -133,7 +133,7 @@ func newUpdateRouteCommand() *cobra.Command {
 	cmd.Flags().IntP("green", "g", 0, "set the weight for the green virtual node")
 	cmd.Flags().IntP("red", "r", 0, "set the weight for the red virtual node")
 	cmd.Flags().Int("rolling", 0, "set increment (as a percentage) for rolling update (either 0 or 100 disables")
-	cmd.Flags().Int("interval", 0, "set interval (in seconds) between each rolling update")
+	cmd.Flags().Int("interval", 10, "set interval (in seconds) between each rolling update")
 	return cmd
 }
 
