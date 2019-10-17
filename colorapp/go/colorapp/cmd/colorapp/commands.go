@@ -304,6 +304,19 @@ type UpdateRouteCommandOptions struct {
 	RollingUpdate *RollingUpdateSpec
 }
 
+// GetRouteCommandOptions contains settings for updating App Mesh routes.
+// NOTE: this, of course, is very specific to the Color App demo.
+type GetRouteCommandOptions struct {
+	// MeshName is the name of the App Mesh mesh to use.
+	MeshName string
+
+	// RouteName is the name of the App Mesh route to use.
+	RouteName string
+
+	// VirtualRouterName is the name of the App Mesh virtual router to use.
+	VirtualRouterName string
+}
+
 func updateRouteHandler(cmd *cobra.Command, args []string) {
 	meshName := "demo"
 	routeName := "color-route"
@@ -372,6 +385,35 @@ func updateRoute(client *awscloud.SimpleClient, options *UpdateRouteCommandOptio
 		formatUpdateRouteResponse(resp))
 }
 
+func getRouteHandler(cmd *cobra.Command, args []string) {
+	meshName := "demo"
+	routeName := "color-route"
+	virtualRouterName := "colorteller-vr"
+
+	getRoute(newClient(cmd), &GetRouteCommandOptions{
+		MeshName:          meshName,
+		RouteName:         routeName,
+		VirtualRouterName: virtualRouterName,
+	})
+}
+
+func getRoute(client *awscloud.SimpleClient, options *GetRouteCommandOptions) {
+	input := &appmesh.DescribeRouteInput{
+		MeshName:          aws.String(options.MeshName),
+		RouteName:         aws.String(options.RouteName),
+		VirtualRouterName: aws.String(options.VirtualRouterName),
+	}
+
+	resp, err := client.GetRoute(input)
+	if err != nil {
+		io.Failed("Unable to get current route(s): %s", err)
+		os.Exit(1)
+	}
+	io.Println("Current route(s): %s\n%s",
+		options.RouteName,
+		formatGetRouteResponse(resp))
+}
+
 func BuildRouteSpec(options *UpdateRouteCommandOptions) *appmesh.RouteSpec {
 	if len(options.Weights) == 0 {
 		io.Fatal(1, "must supply at least one weighted target (blue|green|red)")
@@ -410,13 +452,20 @@ func formatUpdateRouteResponse(resp *appmesh.UpdateRouteResponse) string {
 	return sb.String()
 }
 
+func formatGetRouteResponse(resp *appmesh.DescribeRouteResponse) string {
+	sb := &strings.Builder{}
+	t := tmpl.Parse("get_route_response.tmpl")
+	t.Execute(sb, resp.Route)
+	return sb.String()
+}
+
 func getStackUrlHandler(cmd *cobra.Command, args []string) {
 	getStackUrl(newClient(cmd), "demo")
 }
 
 func getStackUrl(client *awscloud.SimpleClient, stackName string) {
 	url := getStackOutput(client, stackName, "URL")
-	io.Info("%s.%s = %s", stackName, "URL", url)
+	io.Println(url)
 }
 
 func getStackOutput(client *awscloud.SimpleClient, stackName string, key string) string {

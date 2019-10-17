@@ -37,7 +37,7 @@ func CLI() *cobra.Command {
 	cmd.Flags().BoolP("toggle", "t", false, "Help message for toggle")
 
 	// root command subcommands
-	cmd.AddCommand(newConfigCommand())
+//	cmd.AddCommand(newConfigCommand())
 	cmd.AddCommand(newCreateCommand())
 	cmd.AddCommand(newUpdateCommand())
 	cmd.AddCommand(newDeleteCommand())
@@ -137,6 +137,7 @@ func newUpdateRouteCommand() *cobra.Command {
 	return cmd
 }
 
+// cmd get
 func newGetCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "get",
@@ -146,18 +147,21 @@ func newGetCommand() *cobra.Command {
 	cmd.AddCommand(newGetStackUrlCommand())
 	cmd.AddCommand(newGetColorCommand())
 	cmd.AddCommand(newGetColorStatsCommand())
+	cmd.AddCommand(newGetRouteCommand())
 	return cmd
 }
 
-//func newGetStackCommand() *cobra.Command {
-//	var cmd = &cobra.Command{
-//		Use: "stack",
-//		Short: "Get information about a deployed stack",
-//	}
-//	cmd.AddCommand(newGetStackUrlCommand())
-//	return cmd
-//}
+// cmd get stack
+func newGetStackCommand() *cobra.Command {
+	var cmd = &cobra.Command{
+		Use: "stack",
+		Short: "Get information about a deployed stack",
+	}
+	cmd.AddCommand(newGetStackUrlCommand())
+	return cmd
+}
 
+// cmd get url
 func newGetStackUrlCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use: "url",
@@ -167,6 +171,7 @@ func newGetStackUrlCommand() *cobra.Command {
 	return cmd
 }
 
+// cmd get color
 func newGetColorCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use: "color",
@@ -180,6 +185,7 @@ func newGetColorCommand() *cobra.Command {
 	return cmd
 }
 
+// cmd get stats
 func newGetColorStatsCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use: "stats",
@@ -190,6 +196,17 @@ func newGetColorStatsCommand() *cobra.Command {
 	return cmd
 }
 
+// cmd get route
+func newGetRouteCommand() *cobra.Command {
+	var cmd = &cobra.Command{
+		Use: "route",
+		Short: "Get current routing information",
+		Run: getRouteHandler,
+	}
+	return cmd
+}
+
+// cmd clear
 func newClearCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use:   "clear",
@@ -199,6 +216,7 @@ func newClearCommand() *cobra.Command {
 	return cmd
 }
 
+// cmd clear stats
 func newClearStatsCommand() *cobra.Command {
 	var cmd = &cobra.Command{
 		Use: "stats",

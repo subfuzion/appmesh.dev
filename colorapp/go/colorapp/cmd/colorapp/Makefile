@@ -16,3 +16,6 @@ xbuild:
 	packr2 clean
 	../../scripts/xbuild.sh . releases demo 0.1.0
 
+install:
+	packr2 clean
+	go install

@@ -215,6 +215,14 @@ func (c *SimpleClient) UpdateRoute(input *appmesh.UpdateRouteInput) (*appmesh.Up
 	return req.Send(context.TODO())
 }
 
+// GetRoute fetches current App Mesh route(s).
+func (c *SimpleClient) GetRoute(input *appmesh.DescribeRouteInput) (*appmesh.DescribeRouteResponse, error){
+	client := c.AppMeshClient()
+
+	req := client.DescribeRouteRequest(input)
+	return req.Send(context.TODO())
+}
+
 func (c *SimpleClient) GetStackOutput(name string, keys ...string) (map[string]string, error) {
 	client := c.CloudFormationClient()
 
