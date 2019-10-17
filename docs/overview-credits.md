@@ -13,6 +13,6 @@ title: Credits
 
 [**GitHub**](https://github.com) is used to host this site.
 
-Monitoring icon on landingpage made by [Freekpik](https://www.flaticon.com/authors/freepik) from [www.flatiocon.com](https://www.flaticon.com/)
+Icons by [Becris](https://www.flaticon.com/authors/becris), [mynamepong](https://www.flaticon.com/authors/mynamepong), and [Freekpik](https://www.flaticon.com/authors/freepik) from [www.flaticon.com](https://www.flaticon.com/)
 
 

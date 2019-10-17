@@ -16,7 +16,7 @@ import styles from './styles.module.css';
 const features = [
   {
     title: <>Traffic Routing</>,
-    imageUrl: 'img/appmesh-logo.svg',
+    imageUrl: 'img/neural.svg',
     description: (
       <>
         App Mesh makes it easy to control and shape network traffic, supporting common deployment
@@ -26,7 +26,7 @@ const features = [
   },
   {
     title: <>Observability</>,
-    imageUrl: 'img/monitoring.svg',
+    imageUrl: 'img/analysis.svg',
     description: (
       <>
         Because all traffic flows through Envoy proxies, App Mesh delivers
