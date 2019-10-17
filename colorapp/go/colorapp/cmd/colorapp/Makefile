@@ -10,5 +10,9 @@ build-packed:
 
 clean:
 	packr2 clean
-	rm -f colorapp
+	rm -f colorapp bin releases
+
+xbuild:
+	packr2 clean
+	../../scripts/xbuild.sh . releases demo 0.1.0
 
