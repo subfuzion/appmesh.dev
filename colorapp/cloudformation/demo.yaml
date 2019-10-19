@@ -1291,8 +1291,6 @@ Resources:
             WeightedTargets:
               - VirtualNode: blue-vn
                 Weight: 1
-              - VirtualNode: green-vn
-                Weight: 1
           Match:
             Prefix: /
       VirtualRouterName: colorteller-vr
