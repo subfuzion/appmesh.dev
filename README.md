@@ -1,6 +1,6 @@
 # appmesh.dev
 
-This is the repo for [appmesh.dev]. The docs, blog posts, and source code for this site have been created to provide an orientation to App Mesh, a service mesh developed at Amazon to help developers better control and monitor their microservice applications running on AWS.
+This is the repo for [appmesh.dev](https://appmesh.dev). The docs, blog posts, and source code for this site have been created to provide an orientation to App Mesh, a service mesh developed at Amazon to help developers better control and monitor their microservice applications running on AWS.
 
 ## Color App
 
