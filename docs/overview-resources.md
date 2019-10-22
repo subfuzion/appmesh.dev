@@ -5,7 +5,7 @@ title: Resources
 
 ## References
 
-If you're looking to dive deep into the official App Mesh documentation, see here:  
+If you're looking to dive deep into the official online App Mesh documentation, see here:  
 [https://docs.aws.amazon.com/app-mesh/index.html](https://docs.aws.amazon.com/app-mesh/index.html)
 
 The App Mesh team has an examples repo that I help contribute to here:  
